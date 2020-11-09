@@ -19,6 +19,7 @@ public class ThreadTest {
         thread.start();
     }
 }
+
 /*
 *   当创建完 thread 对象后 该线程并没有被启动执行，
 *   直到调用了 start 方法后才真正启动了线程，

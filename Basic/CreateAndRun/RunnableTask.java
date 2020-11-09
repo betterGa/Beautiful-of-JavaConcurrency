@@ -1,5 +1,4 @@
 package Basic.CreateAndRun;
-
 public class RunnableTask implements Runnable{
 
     @Override
