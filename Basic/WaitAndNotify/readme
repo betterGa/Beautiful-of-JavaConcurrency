@@ -1,0 +1,81 @@
+线程通知和等待
+（1）wait()
+       必须在同步块中使用。
+       也就是说，必须事先获取该对象的监视器锁 🔒 ，否则会抛出 IllgealMonitorStateException 异常。
+
+        👉获取一个共享变量的监视器锁的方法：
+       ①通过 synchronized 同步代码块，使用该共享变量作为参数：
+          synchronized(Object resource)
+           {
+          //同步代码块
+            }
+       ②调用共享变量的方法，并且该方法使用了 synchronized 修饰。
+          public synchronized void Method1()
+           {
+          //同步方法
+            }
+
+       ❤ 将获取到该资源监视器锁的这个线程挂起，同时释放锁
+       （只释放当前共享变量上的锁，如果当前线程还持有其他共享变量的锁，则这些锁是不会被释放的。），
+        直到遇到其他线程调用了该线程的 interrupt() 方法，该线程抛出 InterruptedException 中断异常
+        或是 其他线程调用了该共享变量的 notify/notifyAll 方法 唤醒。
+        另外要注意的是 ，一个线程可以从 挂起状态变为 可以运行状态（也就是被唤醒），
+        即使该线程没有被其他线程调用 notify()、notifyAll() 方法进行通知，
+        或者被中断，或者等待超时，这就是所谓的 虚假唤醒 。
+        虽然虚假唤醒在实践中很少发生，但防患于未然，做法是不停地去测试 该线程被唤醒的条件是否满足，
+        不满足则继续等待。 也就是说 在一个循环中调用 wait() 方法进行防范。
+        退出循环的条件是 满足了唤醒该线程的条件。
+         synchronizedc (obj)
+        {
+            while (条件不满足)
+              {obj.wait();}
+         }
+     比如，到条件 n>100 时才唤醒，而虚假唤醒是指，当不满足唤醒条件 ，
+     即 事实是 n<100 时，线程就变为就绪状态了。
+     所以需要 while( n<100)时，让资源处于 wait 等待状态。
+
+
+（2）wait(long timeout)
+     如果一个线程调用共享对象的该方法挂起后，没有在指定的 timeout ms【毫秒，1 ms = 0.001 s】时间内
+     被其他线程调用该变量的 notify() 或者 notifyAll() 方法唤醒，
+     那么该函数还是会因为超时而返回。
+     如果 timeout 设置为 0 则和 wait 方法效果一样，
+     因为在 wait 方法内部就是调用 wait (0) .。
+     如果在调用该函数时，传递了一个负的 timeout 则会抛出 IllegalArgumentException 。
+
+
+（3）wait(long timeout，int nanos)
+    在其内部调用的是 wait(long timeout)函数，只有在 nano>0 时 才使参数 timeout 递增 1。
+    源码
+    public final void wait(long timeout, int nanos) throws InterruptedException {
+        if (timeout < 0) {
+            throw new IllegalArgumentException("timeout value is negative");
+        }
+
+        if (nanos < 0 || nanos > 999999) {
+            throw new IllegalArgumentException(
+                                "nanosecond timeout value out of range");
+        }
+
+        if (nanos > 0) {
+            timeout++;
+        }
+
+        wait(timeout);
+        }
+（4）notify()
+    ♥ 一个线程调用共享对象的 notify() 方法后会唤醒一个 在该共享变量上 调用 wait 系列方法后被挂起线程。一个共享变量上可能会有多个线程在等待，具体唤醒哪个等待的线程，是随机的。
+    ♥ 此外，被唤醒的线程不能马上从 wait 方法返回并继续执行，
+    它必须在获取了共享对象的监视器后，才可以返回，也就是 唤醒它的线程释放了共享变量的锁后
+    （也就是说，到 notify 所在的同步块执行结束，刚才拥有锁的线程也就释放了锁，
+    自然而然的啊，退出同步块，也就是退出 synchronized 块，也就释放锁），
+    被唤醒的线程也不一定会获取到共享对象的监视器锁😵，
+    这是因为该线程还需要和其他线程一起竞争该锁，只有该线程竞争到了共享变量的监视器锁后，
+    才可以继续执行。
+    类似 wait() 方法，只有当前线程获取到了共享变量的监视器锁后，
+    才可以调用共享变量的 notify() 方法，否则会抛出 IllegalMonitorStateException 异常。
+
+
+（5）notifyAll()
+    notify() 方法只会唤醒 一个 在该共享变量上调用 wait 系列方法后被挂起的线程。
+    notifyAll() 方法会唤醒 所有 … …
