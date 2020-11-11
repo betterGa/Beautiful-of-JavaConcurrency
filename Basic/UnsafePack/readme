@@ -1,0 +1,34 @@
+Unsafe类：
+  JDK 的 rt.jar 包中的 Unsafe 类提供了硬件级别的原子性操作，
+  Unsafe 类中的方法都是 native 方法，
+  它们使用 JNI【Java Native Interface】的方式访问本地 C++ 库。
+
+  直接通过 getUnsafe 获取 Unsafe 的实例，是会抛出异常的，
+  原因出在 getUnsafe 的源码：
+  @CallerSensitive
+      public static Unsafe getUnsafe() {
+
+  		//（1）
+          Class var0 = Reflection.getCallerClass();
+
+  		//（2）
+          if (!VM.isSystemDomainLoader(var0.getClassLoader())) {
+              throw new SecurityException("Unsafe");
+          } else {
+              return theUnsafe;
+          }
+      }
+      （1）处，获取 调用 getUnsafe 这个方法的对象的 Class 对象，这里是 TestUnSafe.class。
+       （2）处，判断是不是 Bootstrap 类加载器 加载的 loadClass，
+       即 看 是不是 BootStrap 加载器加载了 TestUnsafe,class，
+       但是吧， TestUnsafe,class 是 AppClassLoader 加载的，所以就抛出了异常。
+
+      ❓ 为什么要有这个判断呢 ❓
+      Unsafe 类是 rt.jar 包提供的，rt.jar 包 里面的类是使用 BootStrap 类加载器 加载的，
+      而 我们的启动 main 函数所在的类，是使用 AppClassLoader 加载的，
+      所以 在 main 函数里加载 Unsafe 类时，
+      根据委托机制，会委托给 BootStrap 去加载 Unsafe 类。
+      要是没有这个判断，那么我们的应用程序就可以随意使用 Unsafe 做事情了，
+      而 Unsafe 类可以直接操作内存，这是不安全的（怪不得叫 Unsafe），
+      所以 JDK 开发组特意做了这个判断，不让开发人员在正规渠道使用 Unsafe 类，
+      而是在 rt.jar 包里的核心类中 使用 Unsafe 功能。
