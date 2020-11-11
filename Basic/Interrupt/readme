@@ -1,0 +1,30 @@
+ Java 中线程中断是一种线程间的协作模式，通过设置线程的中断标志并不能直接终止线程的执行，
+ 而是被中断的线程根据中断状态自行处理。
+
+
+- void interrupt() 方法：
+    中断线程，例如，线程 A 运行时，线程 B 可以调用线程 A 的 interrupt() 方法
+    来设置线程 A 的中断标志为 true 并立即返回。设置标志位 仅仅是设置标志，
+    线程 A 实际并没有被中断，它会继续往下执行。
+    如果线程 A 因为调用了 wait 系列函数、join 方法 或者 sleep 方法而被阻塞挂起，
+    这时候 若线程 B 调用线程 A 的 interrupt() 方法，
+    线程 A 会在调用这些方法的地方抛出 InterruptedException 异常。
+    （点解啊？没想明白，调用这些方法的时候不能持有 CPU ，那是怎么判断中断标志位的呢？
+    怎么实现能抛出异常的呢？   ❔   ）
+
+- boolean isInterrupted() 方法：
+    检测当前线程是否被中断，如果是返回 true，否则返回 false。不是 static 方法。源码：
+    public boolean isInterrupted() {
+        return isInterrupted(false);
+     }
+
+
+- boolean interrupted() 方法：
+    检测 当前线程 是否被中断，如果是返回 true，否则返回 false。
+    与 isInterrupted 不同的是，该方法如果发现当前线程被中断，
+    则会清除中断标志，并且该方法是 static 方法，可以通过 Thread 类直接调用。
+    该方法是获取 当前调用线程currentThread 的中断标志
+    而不是 调用 interrupted() 方法的实例对象的中断标志。
+    public static boolean interrupted() {
+        return currentThread().isInterrupted(true);
+    }
