@@ -1,0 +1,8 @@
+ThreadLocalRandom 类 :
+   继承了 Random 类 ，并重写了 nextInt 方法，
+   在 ThreadLocalRandom 类中并没有使用 继承自 Random 类的原子性种子变量，
+   在 ThreadLocalRandom 类 中 并没有存放具体的种子，
+   具体的种子是存放在 具体的调用线程的 threadLocalRandomSeed 变量里面。
+   ThreadLocalRandom 类 类似于 ThreadLocal 类，就是个 工具类 。
+   当线程调用 ThreadLocalRandom 类 的 current 方法时，ThreadLocalRandom 类
+   负责初始化 调用线程的 threadLocalRandomSeed 变量，也就是 初始化种子。
