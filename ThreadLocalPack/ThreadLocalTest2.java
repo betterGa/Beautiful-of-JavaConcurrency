@@ -4,7 +4,7 @@ package ThreadLocalPack;
 public class ThreadLocalTest2 {
 
     //创建线程变量
-    public static ThreadLocal<String> threadLocal=new ThreadLocal<>();
+    public static ThreadLocal<String> threadLocal=new InheritableThreadLocal<>();
 
     public static void main(String[] args) {
         //设置线程变量

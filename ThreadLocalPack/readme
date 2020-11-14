@@ -1,6 +1,6 @@
 ThreadLocal：
-在每个线程内部都有一个 名为 threadLocals 的成员变量，该变量的类型 是 ThreadLocalMap，
-其中 key 是我们定义的 ThreadLocals 变量的 this 引用，value 为我们使用 set 方法设置的值。
-每个线程的本地变量存放在 线程自己的内存变量 threadLocals 中，
-如果当前线程一直不消亡，那么这些本地变量 会一直存在，所以可能会造成内存溢出，
-因此 使用完毕后 要记得调用 ThreadLocal 的 remove 方法 删除对应线程的 threadLocals 的本地变量。
+  在每个线程内部都有一个 名为 threadLocals 的成员变量，该变量的类型 是 ThreadLocalMap，
+  其中 key 是我们定义的 ThreadLocals 变量的 this 引用，value 为我们使用 set 方法设置的值。
+  每个线程的本地变量存放在 线程自己的内存变量 threadLocals 中，
+  如果当前线程一直不消亡，那么这些本地变量 会一直存在，所以可能会造成内存溢出，
+  因此 使用完毕后 要记得调用 ThreadLocal 的 remove 方法 删除对应线程的 threadLocals 的本地变量。
