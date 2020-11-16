@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.LongAdder;
 public class AtomicTest {
     // 创建 Long 型原子计数器
     private static AtomicLong atomicLong=new AtomicLong();
-    LongAdder
 
     // 创建数据源
     private static Integer[] arrayOne=new Integer[]{0,1,2,3,0,5,6,0,56,0};
