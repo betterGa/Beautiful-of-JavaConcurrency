@@ -1,0 +1,17 @@
+CopyOnWriteArrayList类：
+   并发包中的 并发 List 只有 CopyOnWriteArrayList，
+   它是个线程安全的 ArrayList，对其进行的修改都是在底层的一个复制的数组
+   （快照📸【关于指定数据集合的一个完全可用拷贝】）上进行的，
+   也就是使用了 写时复制 策略。
+
+   CopyOnWriteArrayList 中 迭代器的弱一致性 是指，返回迭代器后，
+   其他线程对 list 的增 删 改 对迭代器是不可见的（因为增删改和迭代器操作的是两个数组）。
+
+   CopyOnWriteArrayList 使用 写时复制 的策略，来保证 list 的一致性，
+   而 获取 - 修改 - 写入，这三步操作不是原子性的，
+   所以，在 增 删 改 的过程中都使用了 独占锁，
+   来保证在某个时刻，只有一个线程能对 list 进行操作，是线程安全的，
+   但是 写时复制 会导致 弱一致性问题。
+   另外，CopyOnWriteArrayList 提供了弱一致性的迭代器，从而保证在获取迭代器后，
+   其他线程对 list 的修改是不可见的，迭代器遍历的数组是一个快照。
+   而且，CopyOnWriteArraySet 的底层是 使用 CopyOnWriteArrayList 实现的。
