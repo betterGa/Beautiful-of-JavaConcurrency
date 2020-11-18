@@ -1,0 +1,70 @@
+AQS
+1、AQS——锁的底层支持
+     AbstractQueuedSynchronizer 抽象同步队列，简称 AQS，它是实现同步器的基础组件，
+     并发包中锁的底层就是使用 AQS 实现的。
+
+     AQS 是一个 FIFO 的 双向队列 ，其内部通过节点 head 和 tail 记录队首 和 队尾元素，
+     队列元素的类型是 Node，其中 Node 中的 thread 变量用来存放进入 AQS 队列里面的线程：
+     Node 节点内部的 SHARED 用来标记 该线程是 获取共享资源时被阻塞挂起后放入 AQS 队列的，
+                 EXCLUSIVED 用来标记 线程是获取独占资源时 被挂起后放入 AQS 队列的,
+                  waitStatus 记录当前线程等待状态，
+                     可以为 CANCELLLED（线程被取消了）、
+                            SIGNAL（线程需要被唤醒）、
+                            CONDITION（线程在条件队列里等待）、
+                            PROPAGATE（释放共享资源时需要通知其他节点）；
+                   prev 记录当前节点的前驱节点，next 记录当前节点的后继节点。
+
+     在 AQS 中维持了一个 单一的 状态信息 state ：
+     /**
+     * The synchronization state.
+     */
+    private volatile int state;
+
+     可以通过 getState、setState、compareAndSetState 方法修改 state 的值。
+
+     对于读写锁 ReentReadWriteLock 来说，
+     state 的高 16 位表示 读状态，即获取 读锁 的次数，低 16 位表示写锁的线程的可重入次数。
+     对于 semaphore 来说，state 表示当前可用信号的个数。
+     对于 CountDownlatch 来说， state 表示计数器当前的值。
+
+    AQS 有个内部类 ConditionObject，用来结合锁 实现线程同步。
+    ConditionObject 可以直接访问 AQS 对象内部的变量，
+    比如 state 状态值和 AQS 队列。
+    ConditionObject 是条件变量，每个条件变量对应一个条件队列（单向链表队列）
+    （🙌 注意区分 AQS 队列 和 条件队列）
+    用来存放调用条件变量的 await 方法后 被阻塞的线程。
+    这个条件队列的头、尾元素分别是 firstWaiter 和 lastWaiter。
+
+         ✨对于 AQS 来说，线程同步的关键是对状态值 state 进行操作。✨
+         根据 state 是否属于一个线程，操作 state 的方式分为 独占方式 和 共享方式。
+         使用独占方式获取的资源是与具体线程绑定的，就是说
+         如果一个线程获取到了资源，就会标记是这个线程获取到了，
+         其他线程再尝试操作 state 就会发现当前该资源不是自己持有的，就会在获取失败后被阻塞。
+         比如，独占锁 ReentrantLock 的实现，当一个线程获取了 ReentrantLock 的锁后，
+         在 AQS 内部会首先使用 CAS 操作把 state 的值从 0 变为1 ，
+         然后设置当前锁的持有者为当前线程，当该线程再一次获取锁时发现它就是锁的持有者，
+         则会把状态值从 1 变为 2，也就是设置可重入数，
+         而当另一个线程获取锁时，发现自己并不是该锁的持有者就会被放入 AQS 阻塞队列后挂起。
+
+         对应共享方式的资源 与 具体线程是不相关的，
+         当多个线程去请求资源时通过 CAS 方式竞争获取资源，
+         当一个线程获取到了资源后，另外一个线程再去获取时如果当前资源还能满足它的需要，
+         则当前线程只需要使用 CAS 方式进行获取许可。
+         比如 Semaphore 信号量，当一个线程通过 acquire() 方法获取信号量时，
+         会首先看当前信号量个数是否满足需要，不满足则把当前线程放入阻塞队列，
+         如果满足则通过自旋 CAS 获取信号量。
+
+2、AQS——条件变量的支持
+      正如 notify 和 wait，是配合synchronized 内置实现线程间同步 ，
+      条件变量的 signal 和 await 方法也是用来配合 使用 AQS 实现的锁，实现线程间同步的。
+
+      它们的不同在于 synchronized 同时只能与一个共享变量的 notify 或 wait 方法实现同步，
+      而 AQS 的一个锁可以对应多个条件变量 。
+
+      调用共享变量的 notify 和 wait 方法前必须先获取该共享变量的内置锁，
+      同理，在调用条件变量的 signal 和 await 方法前也必须先获取条件变量对应的锁。
+      否则会抛出 java.lang.IllegalMonitorStateException 异常。
+
+
+总结：
+ 一个锁对应一个 AQS 阻塞队列，对应多个条件变量，每个条件变量有自己的一个条件队列。
