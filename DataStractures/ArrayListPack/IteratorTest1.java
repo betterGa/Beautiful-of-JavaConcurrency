@@ -7,7 +7,6 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * 迭代器的使用
  */
-
 public class IteratorTest1 {
     public static void main(String[] args) {
         CopyOnWriteArrayList<String> arrayList=new CopyOnWriteArrayList<>();

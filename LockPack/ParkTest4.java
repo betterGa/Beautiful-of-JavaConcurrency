@@ -1,10 +1,11 @@
 package LockPack;
 
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.LockSupport;
 
 public class ParkTest4 {
     public void testPark(){
-        Thread
+
         LockSupport.park(this);
     }
     public static void main(String[] args) {
