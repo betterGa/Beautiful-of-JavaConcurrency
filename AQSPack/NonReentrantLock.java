@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 基于 AQS 实现一个不可重入的独占锁，
@@ -16,6 +17,7 @@ import java.util.concurrent.locks.Lock;
  */
 
 public class NonReentrantLock implements Lock,Serializable {
+
 
     // 内部帮助类
     private static class Sync extends AbstractQueuedSynchronizer{
