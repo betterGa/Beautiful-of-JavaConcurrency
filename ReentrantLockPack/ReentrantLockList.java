@@ -2,6 +2,7 @@ package ReentrantLockPack;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 使用 ReentrantLock 实现一个简单的线程安全的 list
