@@ -40,7 +40,6 @@ public class ReentranLockList {
         try{return arrayLIst.get(index) ;}
         finally {
             readLock.unlock();
-          readLock.newCondition()
         }
     }
 }
