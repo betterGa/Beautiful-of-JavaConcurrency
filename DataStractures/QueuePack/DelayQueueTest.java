@@ -48,7 +48,6 @@ public class DelayQueueTest {
                     ", taskName='" + taskName + '\'' +
                     '}';
         }
-        ScheduledThreadPoolExecutor
     }
     public static void main(String[] args) {
         // 创建 delay 队列
