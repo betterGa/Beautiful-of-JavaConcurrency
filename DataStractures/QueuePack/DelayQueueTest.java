@@ -1,9 +1,7 @@
 package DataStractures.QueuePack;
 
 import java.util.Random;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
    创建一个延迟队列，使用随机数生成 10 个延迟任务，最后依次获取延迟任务，并打印
@@ -50,7 +48,7 @@ public class DelayQueueTest {
                     ", taskName='" + taskName + '\'' +
                     '}';
         }
-
+        ScheduledThreadPoolExecutor
     }
     public static void main(String[] args) {
         // 创建 delay 队列
