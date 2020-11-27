@@ -1,0 +1,4 @@
+2020-11-27 17:06:26.551 [main] INFO  PROJECT_logger - hello
+2020-11-27 17:06:26.551 [main] INFO  PROJECT_logger - ohh
+2020-11-27 17:07:03.757 [main] WARN  PROJECT_logger - hello
+2020-11-27 17:07:03.757 [main] WARN  PROJECT_logger - ohh
